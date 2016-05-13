@@ -1,0 +1,5 @@
+﻿Timestamp	Filename	Error	Message
+2016-05-13 11:57:43.965 -0500	GIS-DEMO.fmp12	0	Import of script steps from clipboard started
+2016-05-13 11:57:43.967 -0500	Send GeoJson to Map::3::Set Variable	1208	Function referred to in the calculation “"{ 'bounds':" & PCSGSBboxToLatLngBounds ( Operations_AGDATA_selected::Bbox ) & ", 'url':'" & OPERATIONS::DataUrl_c & "' }"” is missing.
+2016-05-13 11:57:43.980 -0500	Send GeoJson to Map	0	script steps imported : 2
+2016-05-13 11:57:43.981 -0500	GIS-DEMO.fmp12	0	Import completed
