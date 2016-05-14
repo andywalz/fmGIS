@@ -112,7 +112,7 @@ html, body, #map {
   // Setup featureGroup overlays
   var searchArea = L.featureGroup();
   var contactLocations = L.featureGroup();
-  var points;
+  var points, myData;
 
   // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
@@ -128,7 +128,11 @@ html, body, #map {
             color: '#233fc7'
           }
         },
-        circle: false, // Turns off this drawing tool
+        circle: {
+          shapeOptions: {
+            color: '#233fc7'
+          }
+        },
         rectangle: {
           shapeOptions: {
             color: '#233fc7'
@@ -154,10 +158,20 @@ html, body, #map {
       var shape_for_db = turf.featurecollection(sa);
 
       map.addLayer(layer);
-      console.log("pts",points.toGeoJSON());
-      console.log("pts",shape_for_db);
-      var ptsWithin = turf.within(points.toGeoJSON(), shape_for_db);
-      console.log(ptsWithin);
+      console.log("pts",myData);
+      console.log("sa",turf.featurecollection([sa]));
+      var ptsWithin = turf.within(myData, turf.featurecollection([sa]));
+      console.log(ptsWithin.features.map(function(f){return f.properties.id;}));
+
+      fmajax.callFmpURL({
+          'script':'get_message',
+          'timeout':6000,
+          'var_obj':{'$_results': JSON.stringify(ptsWithin.features.map(function(f){return f.properties.id;})), '$_getmessage':1, '$_wv': fmajax.urlParam('wv')},
+          'success': showErrorMessage,
+          'fail': function(data) {
+              alert(data);
+          }
+      });
     });
 
   function loadGeoJson (data){
@@ -170,6 +184,7 @@ html, body, #map {
             opacity: 1,
             fillOpacity: 0.8
         };
+      myData = data;
       points = new L.GeoJSON(data).addTo(map);
       console.log("loadPts",points);
       contactLocations.addLayer(points);
