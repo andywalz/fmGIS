@@ -112,7 +112,7 @@ html, body, #map {
   // Setup featureGroup overlays
   var searchArea = L.featureGroup();
   var contactLocations = L.featureGroup();
-  var points, myData;
+  var points, myData, selectedArea;
 
   // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
@@ -150,14 +150,19 @@ html, body, #map {
         // Handle leaflet draw events
     map.on('draw:created', function (e) {
       console.log("done drawing",e);
-      var type = e.layerType,
-      layer = e.layer;
 
-      var sa = layer.toGeoJSON();
+      if(selectedArea != undefined){
+        map.removeLayer(selectedArea);
+      }
+
+      var type = e.layerType,
+      selectedArea = e.layer;
+
+      var sa = selectedArea.toGeoJSON();
       var shape = sa.geometry;
       var shape_for_db = turf.featurecollection(sa);
 
-      map.addLayer(layer);
+      map.addLayer(selectedArea);
       console.log("pts",myData);
       console.log("sa",turf.featurecollection([sa]));
       var ptsWithin = turf.within(myData, turf.featurecollection([sa]));
@@ -185,11 +190,19 @@ html, body, #map {
             fillOpacity: 0.8
         };
       myData = data;
-      points = new L.GeoJSON(data).addTo(map);
+      points = new L.GeoJSON(data, {
+                                      onEachFeature: yourOnEachFeatureFunction
+                                  }).addTo(map);
       console.log("loadPts",points);
       contactLocations.addLayer(points);
       map.fitBounds(contactLocations.getBounds());
   }
+
+  function yourOnEachFeatureFunction(feature, layer){
+    if (feature.properties.id) {
+        layer.bindPopup('<a href="fmp://$/GIS-DEMO.fmp12?script=GoToRecord&param=' + feature.properties.id + '">' + feature.properties.name + '</a>');
+    }
+}
 
 </script>
 </body>
