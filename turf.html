@@ -200,7 +200,7 @@ html, body, #map {
 
   function yourOnEachFeatureFunction(feature, layer){
     if (feature.properties.id) {
-        layer.bindPopup('<a href="fmp://$/GIS-DEMO.fmp12?script=GoToRecord&param=' + feature.properties.id + '">' + feature.properties.name + '</a>');
+        layer.bindPopup('<a href="fmp://$/GIS-DEMO.fmp12?script=GoToRecord&param=' + feature.properties.id + '">' + feature.properties.name + '</a><br>$' + feature.properties.price);
     }
 }
 
